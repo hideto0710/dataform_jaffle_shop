@@ -1,0 +1,33 @@
+main:
+  params: [args]
+  steps:
+    - invoke:
+        call: http.post
+        args:
+          url: "https://dataform.googleapis.com/v1beta1/${repository_id}/workflowInvocations"
+          auth:
+            type: OAuth2
+          body:
+            compilationResult: ${compilation_result_name}
+            invocationConfig:
+              includedTags:
+                - daily
+        result: invocationResult
+    - wait:
+        steps:
+          - checkJob:
+              call: http.get
+              args:
+                url: $${"https://dataform.googleapis.com/v1beta1/" + invocationResult.body.name}
+                auth:
+                  type: OAuth2
+              result: invocation
+          - checkIfDone:
+              switch:
+                - condition: $${invocation.body.state in ["SUCCEEDED", "CANCELLED", "FAILED"]}
+                  return: $${invocation.body}
+          - sleep:
+              call: sys.sleep
+              args:
+                seconds: 30
+              next: checkJob

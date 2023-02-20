@@ -5,7 +5,7 @@ resource "random_string" "suffix" {
   numeric = false
 }
 
-resource "google_dataform_repository" "dataform_respository" {
+resource "google_dataform_repository" "jaffle_shop" {
   provider = google-beta
   name     = "jaffle_shop_${random_string.suffix.id}"
 
@@ -23,6 +23,8 @@ resource "google_dataform_repository" "dataform_respository" {
 resource "google_bigquery_dataset" "mart" {
   dataset_id = "jaffle_shop_${random_string.suffix.id}_mart"
   location   = "US"
+
+  delete_contents_on_destroy = true
 
   max_time_travel_hours = "168"
 }

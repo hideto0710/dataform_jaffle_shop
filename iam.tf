@@ -11,3 +11,9 @@ resource "google_project_iam_member" "bigquery_jobuser_loader" {
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${google_service_account.loader.email}"
 }
+
+resource "google_project_iam_member" "dataform_editor" {
+  project = data.google_project.current.project_id
+  role    = "roles/dataform.editor"
+  member  = "serviceAccount:${google_service_account.workflow.email}"
+}

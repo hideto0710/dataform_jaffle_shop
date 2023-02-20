@@ -90,9 +90,36 @@ resource "google_cloud_run_v2_job" "loader" {
   }
 }
 
+data "google_iam_policy" "job_loader" {
+  binding {
+    role = "roles/run.invoker"
+
+    members = [
+      "serviceAccount:${google_service_account.workflow.email}",
+    ]
+  }
+
+  binding {
+    role = "roles/run.viewer"
+
+    members = [
+      "serviceAccount:${google_service_account.workflow.email}",
+    ]
+  }
+}
+
+resource "google_cloud_run_v2_job_iam_policy" "loader" {
+  project     = google_cloud_run_v2_job.loader.project
+  location    = google_cloud_run_v2_job.loader.location
+  name        = google_cloud_run_v2_job.loader.name
+  policy_data = data.google_iam_policy.job_loader.policy_data
+}
+
 resource "google_bigquery_dataset" "raw" {
   dataset_id = "jaffle_shop_${random_string.suffix.id}_raw"
   location   = "US"
+
+  delete_contents_on_destroy = true
 
   max_time_travel_hours = "168"
 }

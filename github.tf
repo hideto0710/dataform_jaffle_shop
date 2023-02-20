@@ -1,6 +1,11 @@
 resource "github_repository" "jaffle_shop" {
   name       = "dataform_jaffle_shop_${random_string.suffix.id}"
   visibility = "private"
+
+  template {
+    owner      = "hideto0710"
+    repository = "dataform_jaffle_shop_template"
+  }
 }
 
 resource "github_repository_file" "config" {

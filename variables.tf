@@ -10,3 +10,8 @@ variable "github_user" {
 variable "gcp_project" {
   type = string
 }
+
+variable "compilation_result_name" {
+  type    = string
+  default = "NONE"
+}
