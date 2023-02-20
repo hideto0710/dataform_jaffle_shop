@@ -130,14 +130,7 @@ resource "google_bigquery_dataset_iam_binding" "raw_writer" {
 
   members = [
     "serviceAccount:${google_service_account.loader.email}",
-  ]
-}
-
-resource "google_bigquery_dataset_iam_binding" "raw_viewer" {
-  dataset_id = google_bigquery_dataset.raw.dataset_id
-  role       = "roles/bigquery.dataViewer"
-
-  members = [
+    # for scd
     "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com",
   ]
 }
