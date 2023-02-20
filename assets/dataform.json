@@ -1,0 +1,10 @@
+{
+    "defaultSchema": "jaffle_shop_${suffix}_mart",
+    "assertionSchema": "jaffle_shop_${suffix}_assertions",
+    "warehouse": "bigquery",
+    "defaultDatabase": "${project_id}",
+    "defaultLocation": "US",
+    "vars": {
+        "rawSchema": "jaffle_shop_${suffix}_raw"
+    }
+}
