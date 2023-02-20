@@ -1,0 +1,40 @@
+main:
+  params: [args]
+  steps:
+    - load:
+        try:
+          call: googleapis.run.v1.namespaces.jobs.run
+          args:
+            name: namespaces/${project_id}/jobs/${job_name}
+            location: ${job_location}
+        retry:
+          predicate: $${predicate_runjob}
+          max_retries: 2
+          backoff:
+            initial_delay: 2
+            max_delay: 60
+            multiplier: 2
+    - invoke:
+        call: http.post
+        args:
+          url: "https://dataform.googleapis.com/v1beta1/${repository_id}/workflowInvocations"
+          auth:
+            type: OAuth2
+          body:
+            compilationResult: ${compilation_result_name}
+            invocationConfig:
+              includedTags:
+                - scd
+        result: invocationResult
+    - complete:
+        return: $${invocationResult.body.name}
+
+predicate_runjob:
+  params: [e]
+  steps:
+    - what_to_repeat:
+        switch:
+          - condition: $${("code" in e) and (e.code in [400, 429, 502, 503, 504])}
+            return: true
+    - otherwise:
+        return: false
